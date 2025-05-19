@@ -1,19 +1,10 @@
-// login
+// Users
 let users = [
     { username: "user1", password: "pass1" },
     { username: "user2", password: "pass2" }
 ];
 
-function login(username, password) {
-    for (let i = 0; i < users.length; i++) {
-        if (users[i].username === username && users[i].password === password) {
-            return { status: "success", message: "Login successful", user: users[i] };
-        }
-    }
-    return { status: "failed", message: "Invalid credentials" };
-}
-
-// bus cat n details
+// Bus Categories
 let buses = {
     luxury: [
         { busName: "Luxury-21", price: 500, availableSeats: 30 },
@@ -41,95 +32,161 @@ let buses = {
     ]
 };
 
-// reservations
+// Reservations
 let reservations = [];
 
-// reserve seat
-function reserveSeat(category, busIndex, seatNumber, name) {
+// Login
+function login() {
+    let username = prompt("Enter username:");
+    let password = prompt("Enter password:");
+    for (let user of users) {
+        if (user.username === username && user.password === password) {
+            alert("Login successful!");
+            return username;
+        }
+    }
+    alert("Invalid credentials.");
+    return null;
+}
+
+// Choose category
+function chooseCategory() {
+    let category = prompt("Choose category (luxury, aircon, minibus, uux):").toLowerCase();
+    if (!buses[category]) {
+        alert("Invalid category.");
+        return null;
+    }
+
+    let list = "Available buses:\n";
+    buses[category].forEach((bus, i) => {
+        list += `${i + 1}. ${bus.busName} - ₱${bus.price} - Seats: ${bus.availableSeats}\n`;
+    });
+    alert(list);
+
+    let busIndex = parseInt(prompt("Choose a bus number:")) - 1;
+    if (busIndex < 0 || busIndex >= buses[category].length) {
+        alert("Invalid bus selection.");
+        return null;
+    }
+
+    return { category, busIndex };
+}
+
+// Reserve a seat
+function reserveSeat(name, category, busIndex) {
+    let seatNumber = prompt("Enter seat number to reserve:");
     let bus = buses[category][busIndex];
 
-    for (let i = 0; i < reservations.length; i++) {
-        if (
-            reservations[i].passenger === name &&
-            reservations[i].busName === bus.busName &&
-            reservations[i].seatNumber === seatNumber
-        ) {
-            return "This seat is already reserved by you.";
+    for (let r of reservations) {
+        if (r.passenger === name && r.busName === bus.busName && r.seatNumber === seatNumber) {
+            alert("Seat already reserved by you.");
+            return;
         }
     }
 
     if (bus.availableSeats <= 0) {
-        return "No available seats.";
+        alert("No seats left.");
+        return;
     }
 
     reservations.push({
         passenger: name,
-        category: category,
+        category,
         busName: bus.busName,
-        seatNumber: seatNumber,
+        seatNumber,
         price: bus.price,
         paid: false,
-        paymentPhoto: null // to store payment proof photo
+        paymentPhoto: null
     });
 
     bus.availableSeats--;
-    return "Seat reserved successfully!";
+    alert("Seat reserved successfully!");
 }
 
-// cancel seat
-function cancelSeat(name, busName, seatNumber) {
+// Cancel reservation
+function cancelSeat(name) {
+    let busName = prompt("Enter bus name to cancel:");
+    let seatNumber = prompt("Enter seat number to cancel:");
+
     for (let i = 0; i < reservations.length; i++) {
-        if (
-            reservations[i].passenger === name &&
-            reservations[i].busName === busName &&
-            reservations[i].seatNumber === seatNumber
-        ) {
+        let r = reservations[i];
+        if (r.passenger === name && r.busName === busName && r.seatNumber === seatNumber) {
             reservations.splice(i, 1);
 
             for (let cat in buses) {
                 for (let j = 0; j < buses[cat].length; j++) {
                     if (buses[cat][j].busName === busName) {
                         buses[cat][j].availableSeats++;
-                        break;
+                        alert("Reservation canceled.");
+                        return;
                     }
                 }
             }
-            return "Reservation canceled!";
         }
     }
-    return "Reservation not found.";
+
+    alert("Reservation not found.");
 }
 
-// photo payment n upload
-function makePayment(name, busName, seatNumber, paymentPhoto) {
-    for (let i = 0; i < reservations.length; i++) {
-        if (
-            reservations[i].passenger === name &&
-            reservations[i].busName === busName &&
-            reservations[i].seatNumber === seatNumber
-        ) {
-            reservations[i].paid = true;
-            reservations[i].paymentPhoto = paymentPhoto; // store photo filename or URL
-            return "Payment completed and photo uploaded!";
+// Make payment
+function makePayment(name) {
+    let busName = prompt("Enter bus name for payment:");
+    let seatNumber = prompt("Enter seat number for payment:");
+    let photo = prompt("Enter payment photo filename or URL:");
+
+    for (let r of reservations) {
+        if (r.passenger === name && r.busName === busName && r.seatNumber === seatNumber) {
+            r.paid = true;
+            r.paymentPhoto = photo;
+            alert("Payment completed.");
+            return;
         }
     }
-    return "Reservation not found for payment.";
+
+    alert("Reservation not found.");
 }
 
-// print reservation
+// View reservations
 function printReservations() {
     if (reservations.length === 0) {
-        console.log("No reservations yet.");
+        alert("No reservations yet.");
         return;
     }
-    for (let i = 0; i < reservations.length; i++) {
-        let r = reservations[i];
-        console.log(`Passenger: ${r.passenger}`);
-        console.log(`Bus: ${r.busName} (${r.category})`);
-        console.log(`Seat Number: ${r.seatNumber}`);
-        console.log(`Price: ₱${r.price}`);
-        console.log(`Paid: ${r.paid ? "Yes" : "No"}`);
-        console.log(`Payment Photo: ${r.paymentPhoto ? r.paymentPhoto : "None"}`);
-        console.log("-----");
+
+    let result = "";
+    reservations.forEach(r => {
+        result += `Passenger: ${r.passenger}\nBus: ${r.busName} (${r.category})\nSeat: ${r.seatNumber}\nPrice: ₱${r.price}\nPaid: ${r.paid ? "Yes" : "No"}\nPhoto: ${r.paymentPhoto || "None"}\n-----\n`;
+    });
+
+    alert(result);
+}
+
+// MAIN MENU
+function main() {
+    let user = login();
+    if (!user) return;
+
+    while (true) {
+        let choice = prompt(
+            "Choose an option:\n1. Reserve Seat\n2. Cancel Seat\n3. Make Payment\n4. View Reservations\n5. Exit"
+        );
+
+        if (choice === "1") {
+            let info = chooseCategory();
+            if (info) reserveSeat(user, info.category, info.busIndex);
+        } else if (choice === "2") {
+            cancelSeat(user);
+        } else if (choice === "3") {
+            makePayment(user);
+        } else if (choice === "4") {
+            printReservations();
+        } else if (choice === "5") {
+            alert("Goodbye!");
+            break;
+        } else {
+            alert("Invalid option.");
+        }
     }
 }
+
+main();
