@@ -1,10 +1,10 @@
-// Users
+// login
 let users = [
     { username: "user1", password: "pass1" },
     { username: "user2", password: "pass2" }
 ];
 
-// Bus Categories
+// bus category
 let buses = {
     luxury: [
         { busName: "Luxury-21", price: 500, availableSeats: 30 },
@@ -32,10 +32,10 @@ let buses = {
     ]
 };
 
-// Reservations
+// reservations
 let reservations = [];
 
-// Login
+// login
 function login() {
     let username = prompt("Enter username:");
     let password = prompt("Enter password:");
@@ -49,7 +49,7 @@ function login() {
     return null;
 }
 
-// Choose category
+// choose category
 function chooseCategory() {
     let category = prompt("Choose category (luxury, aircon, minibus, uux):").toLowerCase();
     if (!buses[category]) {
@@ -72,7 +72,7 @@ function chooseCategory() {
     return { category, busIndex };
 }
 
-// Reserve a seat
+// reserve a seat
 function reserveSeat(name, category, busIndex) {
     let seatNumber = prompt("Enter seat number to reserve:");
     let bus = buses[category][busIndex];
@@ -103,7 +103,7 @@ function reserveSeat(name, category, busIndex) {
     alert("Seat reserved successfully!");
 }
 
-// Cancel reservation
+// cancel reservation
 function cancelSeat(name) {
     let busName = prompt("Enter bus name to cancel:");
     let seatNumber = prompt("Enter seat number to cancel:");
@@ -128,7 +128,7 @@ function cancelSeat(name) {
     alert("Reservation not found.");
 }
 
-// Make payment
+// make payment
 function makePayment(name) {
     let busName = prompt("Enter bus name for payment:");
     let seatNumber = prompt("Enter seat number for payment:");
@@ -146,7 +146,7 @@ function makePayment(name) {
     alert("Reservation not found.");
 }
 
-// View reservations
+// view reservations
 function printReservations() {
     if (reservations.length === 0) {
         alert("No reservations yet.");
@@ -161,7 +161,7 @@ function printReservations() {
     alert(result);
 }
 
-// MAIN MENU
+// menu where the options r made
 function main() {
     let user = login();
     if (!user) return;
