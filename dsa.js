@@ -25,10 +25,10 @@ let buses = {
         { busName: "Mini-44", price: 300, availableSeats: 20 }
     ],
     uux: [
-        { busName: "UUX-51", price: 600, availableSeats: 25 },
-        { busName: "UUX-52", price: 600, availableSeats: 25 },
-        { busName: "UUX-53", price: 600, availableSeats: 25 },
-        { busName: "UUX-54", price: 600, availableSeats: 25 }
+        { busName: "UVX-51", price: 600, availableSeats: 25 },
+        { busName: "UVX-52", price: 600, availableSeats: 25 },
+        { busName: "UVX-53", price: 600, availableSeats: 25 },
+        { busName: "UVX-54", price: 600, availableSeats: 25 }
     ]
 };
 
@@ -51,7 +51,7 @@ function login() {
 
 // choose category
 function chooseCategory() {
-    let category = prompt("Choose category (luxury, aircon, minibus, uux):").toLowerCase();
+    let category = prompt("Choose category (luxury, aircon, minibus, uVx):").toLowerCase();
     if (!buses[category]) {
         alert("Invalid category.");
         return null;
