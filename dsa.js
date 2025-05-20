@@ -7,10 +7,10 @@ let users = [
 // bus category
 let buses = {
     luxury: [
-        { busName: "Luxury-21", price: 500, availableSeats: 30 },
-        { busName: "Luxury-22", price: 500, availableSeats: 30 },
-        { busName: "Luxury-23", price: 500, availableSeats: 30 },
-        { busName: "Luxury-24", price: 500, availableSeats: 30 }
+        { busName: "Luxury-21", price: 700, availableSeats: 30 },
+        { busName: "Luxury-22", price: 700, availableSeats: 30 },
+        { busName: "Luxury-23", price: 700, availableSeats: 30 },
+        { busName: "Luxury-24", price: 700, availableSeats: 30 }
     ],
     aircon: [
         { busName: "Aircon-31", price: 400, availableSeats: 30 },
@@ -24,7 +24,7 @@ let buses = {
         { busName: "Mini-43", price: 300, availableSeats: 20 },
         { busName: "Mini-44", price: 300, availableSeats: 20 }
     ],
-    uux: [
+    uvx: [
         { busName: "UVX-51", price: 600, availableSeats: 25 },
         { busName: "UVX-52", price: 600, availableSeats: 25 },
         { busName: "UVX-53", price: 600, availableSeats: 25 },
@@ -51,32 +51,46 @@ function login() {
 
 // choose category
 function chooseCategory() {
+    // ask user to choose a category and convert it to lowercase
     let category = prompt("Choose category (luxury, aircon, minibus, uvx):").toLowerCase();
+
+    // if the chosen category is not in the buses list, show an error
     if (!buses[category]) {
         alert("Invalid category.");
         return null;
     }
 
+    // create a list of available buses in the chosen category
     let list = "Available buses:\n";
     buses[category].forEach((bus, i) => {
         list += `${i + 1}. ${bus.busName} - ₱${bus.price} - Seats: ${bus.availableSeats}\n`;
     });
+
+    // show the list to the user
     alert(list);
 
+    // ask the user to choose a bus by number
     let busIndex = parseInt(prompt("Choose a bus number:")) - 1;
+
+    // check if the bus number is valid
     if (busIndex < 0 || busIndex >= buses[category].length) {
         alert("Invalid bus selection.");
         return null;
     }
 
+    // return the chosen category and bus index
     return { category, busIndex };
 }
 
 // reserve a seat
 function reserveSeat(name, category, busIndex) {
+    // ask user to enter the seat number they want
     let seatNumber = prompt("Enter seat number to reserve:");
+
+    // get the selected bus from the list
     let bus = buses[category][busIndex];
 
+    // check if this seat is already reserved by the same person
     for (let r of reservations) {
         if (r.passenger === name && r.busName === bus.busName && r.seatNumber === seatNumber) {
             alert("Seat already reserved by you.");
@@ -84,11 +98,13 @@ function reserveSeat(name, category, busIndex) {
         }
     }
 
+    // if no seats left, show an alert
     if (bus.availableSeats <= 0) {
         alert("No seats left.");
         return;
     }
 
+    // add the reservation to the list
     reservations.push({
         passenger: name,
         category,
@@ -99,20 +115,27 @@ function reserveSeat(name, category, busIndex) {
         paymentPhoto: null
     });
 
+    // decrease the number of available seats
     bus.availableSeats--;
+
+    // show success message
     alert("Seat reserved successfully!");
 }
 
 // cancel reservation
 function cancelSeat(name) {
+    // ask for bus name and seat number to cancel
     let busName = prompt("Enter bus name to cancel:");
     let seatNumber = prompt("Enter seat number to cancel:");
 
+    // look for the matching reservation
     for (let i = 0; i < reservations.length; i++) {
         let r = reservations[i];
         if (r.passenger === name && r.busName === busName && r.seatNumber === seatNumber) {
+            // remove the reservation
             reservations.splice(i, 1);
 
+            // find the bus and increase its available seats
             for (let cat in buses) {
                 for (let j = 0; j < buses[cat].length; j++) {
                     if (buses[cat][j].busName === busName) {
@@ -125,17 +148,21 @@ function cancelSeat(name) {
         }
     }
 
+    // if no matching reservation is found
     alert("Reservation not found.");
 }
 
 // make payment
 function makePayment(name) {
+    // ask user for bus name, seat number, and photo as proof of payment
     let busName = prompt("Enter bus name for payment:");
     let seatNumber = prompt("Enter seat number for payment:");
     let photo = prompt("Enter payment photo filename or URL:");
 
+    // find the matching reservation
     for (let r of reservations) {
         if (r.passenger === name && r.busName === busName && r.seatNumber === seatNumber) {
+            // mark as paid and save the payment photo
             r.paid = true;
             r.paymentPhoto = photo;
             alert("Payment completed.");
@@ -143,6 +170,7 @@ function makePayment(name) {
         }
     }
 
+    // if reservation is not found
     alert("Reservation not found.");
 }
 
